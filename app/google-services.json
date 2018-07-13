@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "1096753450814",
+    "firebase_url": "https://mcparkingsystem.firebaseio.com",
+    "project_id": "mcparkingsystem",
+    "storage_bucket": "mcparkingsystem.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1096753450814:android:045bf722b962966e",
+        "android_client_info": {
+          "package_name": "com.jobbs.parkingapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1096753450814-r3ons1tp79ertv0f9plrtlhtug23231s.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNUExeYnufGkEuxJusgyngCMMCee_zIuA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

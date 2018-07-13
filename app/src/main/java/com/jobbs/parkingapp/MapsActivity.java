@@ -43,6 +43,12 @@ import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.firebase.database.ChildEventListener;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -72,6 +78,8 @@ public class MapsActivity extends FragmentActivity implements
     private LocationRequest mLocationRequest;
     private ArrayList<Marker> mAllMarkers;
     private Marker selectedParking;
+    final FirebaseDatabase database = FirebaseDatabase.getInstance();
+    DatabaseReference ref = database.getReference("parkinglots");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -280,43 +288,15 @@ public class MapsActivity extends FragmentActivity implements
         Marker m5 = mMap.addMarker(new MarkerOptions().position(park).title("Parking Lot 4").draggable(false));
         m5.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.parking_lot_img));
 
-        park = new LatLng(6.917453, 79.864255);
-        Marker m6 = mMap.addMarker(new MarkerOptions().position(park).title("Parking Lot 5").draggable(false));
-        m6.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.parking_lot_img));
-
-        park = new LatLng(6.920920, 79.876140);
-        Marker m7 = mMap.addMarker(new MarkerOptions().position(park).title("Parking Lot 6").draggable(false));
-        m7.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.parking_lot_img));
-
-        park = new LatLng(6.842807, 79.872435);
-        Marker m8 = mMap.addMarker(new MarkerOptions().position(park).title("Parking Lot 7").draggable(false));
-        m8.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.parking_lot_img));
-
-        park = new LatLng(6.891050, 79.876412);
-        Marker m9 = mMap.addMarker(new MarkerOptions().position(park).title("Parking Lot 8").draggable(false));
-        m9.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.parking_lot_img));
-
-        park = new LatLng(6.916782, 79.864195);
-        Marker m10 = mMap.addMarker(new MarkerOptions().position(park).title("Parking Lot 9").draggable(false));
-        m10.setIcon(BitmapDescriptorFactory.fromResource(R.drawable.parking_lot_img));
-
-
         mAllMarkers=new ArrayList<>();
         mAllMarkers.add(m2);
         mAllMarkers.add(m3);
         mAllMarkers.add(m4);
         mAllMarkers.add(m5);
-        mAllMarkers.add(m6);
-        mAllMarkers.add(m7);
-        mAllMarkers.add(m8);
-        mAllMarkers.add(m9);
-        mAllMarkers.add(m10);
 
         Log.e("seteed markers","t");
 
-        for (int i=0;i<mAllMarkers.size();i++){
-            mAllMarkers.get(i).setVisible(false);
-        }
+
 
 
         mMap.setOnMarkerClickListener(new GoogleMap.OnMarkerClickListener() {
@@ -342,8 +322,48 @@ public class MapsActivity extends FragmentActivity implements
                 return false;
             }
         });
-
         getDeviceLocation();
+        ref.addChildEventListener(new ChildEventListener() {
+
+            @Override
+            public void onChildAdded(DataSnapshot dataSnapshot, String s) {
+                Log.e("sad",dataSnapshot+"l");
+                Parkingspot post = dataSnapshot.getValue(Parkingspot.class);
+                if(post.getOcc()==1) {
+                    mAllMarkers.get(post.getId()).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.chosen));
+                }else{
+                    mAllMarkers.get(post.getId()).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.parking_lot_img));
+
+                }
+            }
+
+            @Override
+            public void onChildChanged(DataSnapshot dataSnapshot, String s) {
+                Log.e("sad",dataSnapshot+"");
+                Parkingspot post = dataSnapshot.getValue(Parkingspot.class);
+                if(post.getOcc()==1) {
+                    mAllMarkers.get(post.getId()).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.chosen));
+                }else{
+                    mAllMarkers.get(post.getId()).setIcon(BitmapDescriptorFactory.fromResource(R.drawable.parking_lot_img));
+
+                }
+            }
+
+            @Override
+            public void onChildMoved(DataSnapshot dataSnapshot, String s) {
+
+            }
+
+            @Override
+            public void onCancelled(DatabaseError databaseError) {
+
+            }
+
+            @Override
+            public void onChildRemoved(DataSnapshot dataSnapshot) {
+
+            }
+        });
 
     }
 
@@ -435,7 +455,7 @@ public class MapsActivity extends FragmentActivity implements
             parkingLoc.setLongitude(mAllMarkers.get(i).getPosition().longitude);
             parkingLoc.setLatitude(mAllMarkers.get(i).getPosition().latitude);
             Log.e("distance",currentLoc.distanceTo(parkingLoc)+"");
-            if (currentLoc.distanceTo(parkingLoc)<3000){
+            if (currentLoc.distanceTo(parkingLoc)<10000){
                 mAllMarkers.get(i).setVisible(true);
             }else{
                 mAllMarkers.get(i).setVisible(false);
